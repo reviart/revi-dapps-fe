@@ -1,9 +1,10 @@
 {
-  "name": "privy-create-react-app",
+  "name": "revi-dapps",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@privy-io/react-auth": "^2.13.0",
+    "@solana/spl-token": "^0.4.13",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -13,8 +14,9 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:network": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --host"
   },
   "eslintConfig": {
     "extends": [

@@ -4,6 +4,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { PrivyProvider } from '@privy-io/react-auth';
+import { toSolanaWalletConnectors } from '@privy-io/react-auth/solana';
+
+// Use Vite env variables for Solana config
+const solanaCluster = import.meta.env.VITE_SOLANA_CLUSTER;
+const solanaRpcUrl = import.meta.env.VITE_SOLANA_RPC_URL;
+
+const solanaChain = {
+  name: 'Solana',
+  id: `solana-${solanaCluster}`,
+  type: 'solana',
+  chainId: 101,
+  rpcUrls: [solanaRpcUrl],
+  cluster: solanaCluster
+};
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -11,13 +25,24 @@ root.render(
     <PrivyProvider
       appId={import.meta.env.VITE_PRIVY_APP_ID}
       onSuccess={(user) => console.log(`User ${user.id} logged in!`)}
+      config={{
+        supportedChains: [solanaChain],
+        defaultChain: solanaChain,
+        solanaClusters: [{
+          name: solanaCluster,
+          rpcUrl: solanaRpcUrl
+        }],
+        externalWallets: {
+          solana: {
+            enabled: true,
+            connectors: toSolanaWalletConnectors({})
+          }
+        }
+      }}
     >
       <App />
     </PrivyProvider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

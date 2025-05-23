@@ -1,35 +1,70 @@
-# Privy Auth `create-react-app` Starter
+# Revi DApps – Secure Solana Wallet Interface
 
-This is a minimal template for integrating [Privy Auth](https://www.privy.io/) into a new [`create-react-app`](https://create-react-app.dev/) project. Check out the deployed app [here](https://create-react-app.privy.io/)!
+<p align="center">
+  <img src="public/git_preview_1.png" alt="App Preview" width="400" />
+</p>
 
-## Setup:
+## Product Overview
 
-1. Clone this repository and open it in your terminal.
-```
-git clone https://github.com/privy-io/create-react-app.git
-```
+Revi DApps is a modern web application that enables users to securely connect, authenticate, and interact with their Solana wallets. Built for seamless onboarding, it leverages Privy Auth for authentication and supports both email and wallet-based login. Users can view wallet balances, sign messages, and manage their Solana accounts—all in a sleek, user-friendly interface.
 
-2. Install the necessary dependencies (including [Privy Auth](https://www.npmjs.com/package/@privy-io/react-auth)) with `npm`.
+### Key Features
+- **Solana Wallet Integration:** Connect and manage Solana wallets with Privy Auth.
+- **Multi-Method Login:** Authenticate using email or wallet for flexible onboarding.
+- **Balance Display:** Instantly view your SOL balance after connecting.
+- **Message Signing:** Sign custom messages with your Solana wallet for dApp interactions or verification.
+- **Modern UI:** Responsive, accessible, and visually appealing design.
+
+## Tech Stack
+- **React 18** for UI
+- **Vite** for fast development and build
+- **Privy Auth** (`@privy-io/react-auth`) for authentication
+- **Solana Web3.js** for blockchain interactions
+- **Alchemy** (optional) for enhanced Solana RPC endpoints
+
+## Getting Started
+
+### 1. Clone the repository
 ```sh
-npm i 
+git clone <your-repo-url>
+cd revi-dapps-fe
 ```
 
-3. Initialize your environment variables by copying the `.env.example` file to an `.env` file. Then, [paste your Privy App ID from the console](https://docs.privy.io/guide/console/api-keys) in `.env`.
+### 2. Install dependencies
 ```sh
-# In your terminal, create .env from .env.example
+npm install
+```
+
+### 3. Configure environment variables
+Copy the example environment file and fill in your credentials:
+```sh
 cp .env.example .env
-
-# Add your Privy App ID to .env
-VITE_PRIVY_APP_ID=<your-privy-app-id>
 ```
+- Get your Privy App ID from the [Privy Console](https://docs.privy.io/guide/console/api-keys) and set it in `.env`.
+- Optionally, set your Alchemy API key for Solana RPC.
 
-## Building locally:
+### 4. Run the app locally
+```sh
+npm run dev
+```
+Visit [http://localhost:5173](http://localhost:5173) to use the app.
 
-In your project directory, run `npm run dev`. You can now visit http://localhost:5173 (or the port Vite chooses if 5173 is busy) to see your app and login with Privy!
+## Project Structure & Key Files
+- `src/index.jsx`: App entry point, PrivyProvider setup, Solana config
+- `src/App.jsx`: Main UI, wallet connection, balance, and message signing logic
+- `src/animations.css`, `src/App.css`, `src/index.css`: Styling and UI animations
+- `.env.example`: Reference for required environment variables
 
-## Check out:
+## Extending & Contributing
+- Add new Solana features by extending `src/App.jsx`.
+- UI improvements can be made in the CSS files.
+- For authentication or wallet logic, see Privy and Solana Web3.js docs.
 
-- `src/index.jsx` for how to use the `PrivyProvider` and initialize it with your Privy App ID
-- `src/App.jsx` for how to use the `usePrivy()` hook, fields like `authenticated` and `user`, and methods like `login` and `logout`
+## Resources
+- [Privy Documentation](https://docs.privy.io/)
+- [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)
+- [Vite Documentation](https://vitejs.dev/)
 
-**Check out [our docs](https://docs.privy.io/) for more guidance around using Privy in your app!**
+---
+
+*This project is for demonstration and rapid prototyping. For production, review security and best practices for wallet management and authentication.*

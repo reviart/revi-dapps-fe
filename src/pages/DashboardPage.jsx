@@ -2,11 +2,31 @@ import { useEffect, useRef, useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useSolanaWallets } from '@privy-io/react-auth/solana';
 import { Connection, PublicKey } from "@solana/web3.js";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowRightStartOnRectangleIcon,
   PencilIcon,
+  DocumentDuplicateIcon,
+  CheckIcon,
 } from '@heroicons/react/24/outline';
+
+// Token configuration
+const TOKENS = {
+  SOL: {
+    name: "Solana",
+    symbol: "SOL",
+    decimals: 9,
+    icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+  },
+  USDC: {
+    name: "USD Coin",
+    symbol: "USDC",
+    decimals: 6,
+    mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+  }
+};
 
 // Utility: Uint8Array to base64 (safe for large arrays)
 function uint8ToBase64(uint8) {
@@ -27,7 +47,20 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [balance, setBalance] = useState(0);
+  const [tokens, setTokens] = useState([]);
+  const [copiedAddress, setCopiedAddress] = useState("");
   const inputRef = useRef(null);
+
+  // Add copy functionality
+  const handleCopy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedAddress(text);
+      setTimeout(() => setCopiedAddress(""), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
 
   useEffect(() => {
     if (!authenticated && ready) {
@@ -68,6 +101,58 @@ export default function DashboardPage() {
     };
     fetchBalance();
   }, [solanaWallet]);
+
+  // Fetch token balances
+  useEffect(() => {
+    const fetchTokens = async () => {
+      if (!solanaWallet || !solanaWallet.address) return;
+      
+      try {
+        const rpcUrl = `https://solana-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_API_KEY}`;
+        const connection = new Connection(rpcUrl, {
+          commitment: "confirmed",
+          wsEndpoint: undefined,
+          httpHeaders: { "Accept": "application/json" }
+        });
+        
+        const pubkey = new PublicKey(solanaWallet.address);
+        
+        // Get SPL token accounts
+        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(pubkey, {
+          programId: TOKEN_PROGRAM_ID,
+        });
+
+        // Process token accounts
+        const tokensData = tokenAccounts.value.map(({ account }) => {
+          const { mint, tokenAmount } = account.data.parsed.info;
+          const tokenInfo = Object.values(TOKENS).find(t => t.mint === mint);
+
+          if (tokenInfo) {
+            return {
+              ...tokenInfo,
+              balance: tokenAmount.uiAmount,
+              address: mint
+            };
+          }
+          return null;
+        }).filter(Boolean);
+
+        // Add SOL to tokens list
+        tokensData.unshift({
+          ...TOKENS.SOL,
+          balance,
+          address: solanaWallet.address
+        });
+
+        setTokens(tokensData);
+      } catch (e) {
+        console.error("Error fetching tokens:", e);
+        setTokens([]);
+      }
+    };
+
+    fetchTokens();
+  }, [solanaWallet, balance]);
 
   const handleLogout = () => {
     setMessage("");
@@ -113,16 +198,72 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 bg-neutral-700 rounded-lg">
                   <div className="text-gray-400 text-sm mb-1">Address</div>
-                  <div className="text-white font-mono text-sm break-all">
-                    {solanaWallet?.address || 'Not connected'}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-white font-mono text-sm break-all">
+                      {solanaWallet?.address || 'Not connected'}
+                    </div>
+                    {solanaWallet?.address && (
+                      <button
+                        onClick={() => handleCopy(solanaWallet.address)}
+                        className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full
+                          bg-neutral-600 hover:bg-neutral-500 transition-colors"
+                      >
+                        {copiedAddress === solanaWallet.address ? (
+                          <CheckIcon className="w-4 h-4 text-green-400" />
+                        ) : (
+                          <DocumentDuplicateIcon className="w-4 h-4 text-gray-400" />
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="p-4 bg-neutral-700 rounded-lg">
-                  <div className="text-gray-400 text-sm mb-1">Balance</div>
+                  <div className="text-gray-400 text-sm mb-1">Total Balance</div>
                   <div className="text-white text-2xl font-semibold">
-                    {balance} SOL
+                    {balance} USD
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Portfolio Section */}
+            <div className="p-6 bg-neutral-800 rounded-xl">
+              <h2 className="text-white text-xl font-semibold mb-4">Portfolio</h2>
+              <div className="space-y-4">
+                {tokens.map((token) => (
+                  <div key={token.address} className="p-4 bg-neutral-700 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <img 
+                          src={token.icon} 
+                          alt={token.symbol} 
+                          className="w-8 h-8 rounded-full flex items-center justify-center"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.innerHTML = token.symbol[0];
+                            e.target.className = "text-white text-sm font-bold";
+                          }}
+                        />
+                        <div>
+                          <div className="text-white font-semibold">{token.name}</div>
+                          <div className="text-gray-400 text-sm">{token.symbol}</div>
+                        </div>
+                      </div>
+                      <div className="text-right flex items-center gap-4">
+                        <div>
+                          <div className="text-white font-semibold">
+                            {token.balance.toFixed(token.decimals)} {token.symbol}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {tokens.length === 0 && (
+                  <div className="text-center text-gray-400 py-8">
+                    No tokens found in this wallet
+                  </div>
+                )}
               </div>
             </div>
 

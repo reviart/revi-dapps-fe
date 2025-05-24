@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import globals from "globals";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import importPlugin from "eslint-plugin-import";
@@ -8,28 +9,30 @@ export default [
   {
     files: ["src/**/*.{js,jsx}"],
     languageOptions: {
-      ecmaVersion: "latest",
       sourceType: "module",
       parserOptions: {
+        ecmaVersion: "latest",
         ecmaFeatures: {
           jsx: true
         }
       },
       globals: {
-        document: "readonly",
-        window: "readonly",
-        process: "readonly",
-        console: "readonly",
-        TextEncoder: "readonly",
-        btoa: "readonly",
-        test: "readonly",
-        expect: "readonly"
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2021,
+        process: true,
+        Buffer: true
       }
     },
     plugins: {
       react: reactPlugin,
       "react-hooks": reactHooksPlugin,
       import: importPlugin
+    },
+    settings: {
+      react: {
+        version: "detect"
+      }
     },
     rules: {
       "no-unused-vars": ["error", { 
@@ -47,14 +50,6 @@ export default [
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "import/no-duplicates": "error"
-    },
-    settings: {
-      react: {
-        version: "detect",
-        createClass: "createReactClass",
-        pragma: "React",
-        fragment: "Fragment"
-      }
     }
   }
 ];

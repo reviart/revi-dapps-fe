@@ -1,25 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { PrivyProvider } from '@privy-io/react-auth';
-import { toSolanaWalletConnectors } from '@privy-io/react-auth/solana';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { PrivyProvider } from "@privy-io/react-auth";
+import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
 
 // Use Vite env variables for Solana config
 const solanaCluster = import.meta.env.VITE_SOLANA_CLUSTER;
 const solanaRpcUrl = import.meta.env.VITE_SOLANA_RPC_URL;
 
 const solanaChain = {
-  name: 'Solana',
+  name: "Solana",
   id: `solana-${solanaCluster}`,
-  type: 'solana',
+  type: "solana",
   chainId: 101,
   rpcUrls: [solanaRpcUrl],
-  cluster: solanaCluster
+  cluster: solanaCluster,
 };
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <PrivyProvider
@@ -28,16 +28,18 @@ root.render(
       config={{
         supportedChains: [solanaChain],
         defaultChain: solanaChain,
-        solanaClusters: [{
-          name: solanaCluster,
-          rpcUrl: solanaRpcUrl
-        }],
+        solanaClusters: [
+          {
+            name: solanaCluster,
+            rpcUrl: solanaRpcUrl,
+          },
+        ],
         externalWallets: {
           solana: {
             enabled: true,
-            connectors: toSolanaWalletConnectors({})
-          }
-        }
+            connectors: toSolanaWalletConnectors({}),
+          },
+        },
       }}
     >
       <App />

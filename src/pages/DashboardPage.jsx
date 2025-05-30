@@ -63,13 +63,21 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    console.log({
+      authenticated, ready, user
+    });
+
     if (!authenticated && ready) {
       navigate('/');
     }
-  }, [authenticated, ready, navigate]);
+  }, [authenticated, ready, user, navigate]);
 
   // Monitor solanaWallets changes
   useEffect(() => {
+    console.log({
+      solanaWallets
+    });
+
     if (solanaWallets && solanaWallets.length > 0) {
       const firstWallet = solanaWallets[0];
       setSolanaWallet(firstWallet);
@@ -136,13 +144,6 @@ export default function DashboardPage() {
           }
           return null;
         }).filter(Boolean);
-
-        // Add SOL to tokens list
-        tokensData.unshift({
-          ...TOKENS.SOL,
-          balance,
-          address: solanaWallet.address
-        });
 
         setTokens(tokensData);
       } catch (e) {

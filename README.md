@@ -78,6 +78,7 @@ Visit [http://localhost:5173](http://localhost:5173) to use the app.
 - For authentication or wallet logic, see Privy and Solana Web3.js docs
 
 ## Resources
+- [Initial Repository - PrivyIO](https://github.com/privy-io/create-react-app)
 - [Privy Documentation](https://docs.privy.io/)
 - [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)
 - [Vite Documentation](https://vitejs.dev/)

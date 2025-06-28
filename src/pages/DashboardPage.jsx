@@ -25,6 +25,13 @@ const TOKENS = {
     decimals: 6,
     mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     icon: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+  },
+  SANA: {
+    name: "Sanafi Onchain",
+    symbol: "SANA",
+    decimals: 9,
+    mint: "5dpN5wMH8j8au29Rp91qn4WfNq6t6xJfcjQNcFeDJ8Ct",
+    icon: "https://s1.coincarp.com/logo/1/sanafi-onchain.png?style=200&v=1750385755",
   }
 };
 
